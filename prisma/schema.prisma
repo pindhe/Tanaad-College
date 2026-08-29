@@ -1,0 +1,277 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  CONTENT_MANAGER
+  ADMISSIONS_OFFICER
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  ACCEPTED
+  REJECTED
+  DOCUMENTS_REQUIRED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum ContactStatus {
+  NEW
+  READ
+  REPLIED
+  ARCHIVED
+}
+
+enum GalleryCategory {
+  CAMPUS
+  CLASSROOMS
+  LABORATORIES
+  STUDENTS
+  GRADUATION
+  EVENTS
+  SPORTS
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(CONTENT_MANAGER)
+  news      News[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Faculty {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  description String
+  image       String?
+  departments Department[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Department {
+  id          String    @id @default(cuid())
+  facultyId   String
+  faculty     Faculty   @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  name        String
+  slug        String    @unique
+  description String
+  programs    Program[]
+  staff       Staff[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([facultyId])
+}
+
+model Program {
+  id                  String        @id @default(cuid())
+  departmentId        String
+  department          Department    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  name                String
+  slug                String        @unique
+  description         String
+  overview            String        @default("")
+  duration            String
+  requirements        String
+  courses             String        @default("")
+  learningOutcomes    String        @default("")
+  careerOpportunities String
+  tuition             String
+  image               String?
+  featured            Boolean       @default(false)
+  published           Boolean       @default(false)
+  applications        Application[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@index([departmentId])
+  @@index([published, featured])
+}
+
+model Staff {
+  id            String      @id @default(cuid())
+  name          String
+  position      String
+  departmentId  String?
+  department    Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  qualification String
+  biography     String
+  photo         String?
+  email         String?
+  isLeadership  Boolean     @default(false)
+  displayOrder  Int         @default(0)
+  published     Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([departmentId])
+}
+
+model Application {
+  id                    String            @id @default(cuid())
+  referenceNumber       String            @unique
+  fullName              String
+  gender                Gender
+  dateOfBirth           DateTime
+  phone                 String
+  email                 String
+  address               String
+  previousSchool        String
+  qualification         String
+  graduationYear        Int
+  gpa                   String?
+  programId             String
+  program               Program           @relation(fields: [programId], references: [id], onDelete: Restrict)
+  passportPhoto         String
+  certificate           String
+  identification        String
+  emergencyName         String
+  emergencyRelationship String
+  emergencyPhone        String
+  status                ApplicationStatus @default(SUBMITTED)
+  adminNotes            String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([programId])
+  @@index([status])
+  @@index([email])
+  @@index([phone])
+  @@index([referenceNumber])
+}
+
+model News {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  category      String
+  excerpt       String
+  content       String
+  featuredImage String?
+  authorId      String
+  author        User      @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  published     Boolean   @default(false)
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([published, publishedAt])
+  @@index([authorId])
+}
+
+model Event {
+  id               String   @id @default(cuid())
+  title            String
+  slug             String   @unique
+  description      String
+  image            String?
+  location         String
+  eventDate        DateTime
+  eventTime        String
+  registrationLink String?
+  published        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([eventDate])
+  @@index([published])
+}
+
+model Gallery {
+  id        String          @id @default(cuid())
+  title     String
+  image     String
+  category  GalleryCategory
+  published Boolean         @default(true)
+  createdAt DateTime        @default(now())
+}
+
+model Testimonial {
+  id             String   @id @default(cuid())
+  studentName    String
+  program        String
+  graduationYear Int
+  photo          String?
+  content        String
+  rating         Int      @default(5)
+  published      Boolean  @default(false)
+  createdAt      DateTime @default(now())
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String   @default("General")
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    ContactStatus @default(NEW)
+  createdAt DateTime      @default(now())
+}
+
+model SiteSettings {
+  id                 String @id @default("default")
+  collegeName        String @default("Tanaad College")
+  logo               String?
+  favicon            String?
+  heroTitle          String @default("Build Your Future With Tanaad College")
+  heroDescription    String @default("Quality education, practical skills, and a brighter future start here.")
+  heroImage          String?
+  phone              String @default("[Official Phone]")
+  email              String @default("[Official Email]")
+  address            String @default("[Official Address]")
+  whatsapp           String @default("")
+  facebook           String?
+  instagram          String?
+  tiktok             String?
+  youtube            String?
+  linkedin           String?
+  googleMapsUrl      String?
+  aboutText          String @default("[Official About]")
+  historyText        String @default("[Official History]")
+  vision             String @default("[Official Vision]")
+  mission            String @default("[Official Mission]")
+  officeHours        String @default("[Official Office Hours]")
+  statsStudents      Int    @default(0)
+  statsLecturers     Int    @default(0)
+  statsPrograms      Int    @default(0)
+  statsYears         Int    @default(0)
+  studentLifeContent String @default("{}")
+}
+
+model AdmissionDate {
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
