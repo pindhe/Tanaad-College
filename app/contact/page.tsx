@@ -13,7 +13,7 @@ export const metadata = buildMetadata({
   path: "/contact",
 });
 
-const HERO_IMAGE = "/images/imgs/502997519_1408768317365427_6447797780186284108_n.jpg";
+const HERO_IMAGE = "/images/imgs/19.jpg";
 const SIDE_IMAGE = "/images/imgs/790683925_1817997656442489_4589591040991255365_n.jpg";
 
 function displayHours(value: string) {

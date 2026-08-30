@@ -5,15 +5,23 @@ export function PageHeader({
   title,
   description,
   image,
+  banner = false,
   className,
 }: {
   title: string;
   description?: string;
   image?: string | null;
+  banner?: boolean;
   className?: string;
 }) {
   return (
-    <section className={cn("relative isolate overflow-hidden bg-primary text-white", className)}>
+    <section
+      className={cn(
+        "relative isolate overflow-hidden",
+        banner ? "bg-[#F7F8FC] text-primary" : "bg-primary text-white",
+        className,
+      )}
+    >
       {image ? (
         <>
           <Image
@@ -21,14 +29,17 @@ export function PageHeader({
             alt=""
             fill
             priority
-            className="object-cover object-center"
+            className={cn(
+              banner ? "object-cover object-center sm:object-contain sm:object-left" : "object-cover object-center",
+            )}
             sizes="100vw"
           />
           <div
             className="absolute inset-0"
             style={{
-              background:
-                "linear-gradient(105deg, rgba(12,1,155,0.92) 0%, rgba(12,1,155,0.78) 42%, rgba(12,1,155,0.45) 100%)",
+              background: banner
+                ? "linear-gradient(105deg, rgba(247,248,252,0.94) 0%, rgba(247,248,252,0.82) 38%, rgba(247,248,252,0.35) 68%, rgba(247,248,252,0.08) 100%)"
+                : "linear-gradient(105deg, rgba(12,1,155,0.92) 0%, rgba(12,1,155,0.78) 42%, rgba(12,1,155,0.45) 100%)",
             }}
           />
         </>
@@ -40,7 +51,14 @@ export function PageHeader({
           {title}
         </h1>
         {description ? (
-          <p className="mt-5 max-w-2xl text-base leading-7 text-white/85 sm:text-lg">{description}</p>
+          <p
+            className={cn(
+              "mt-5 max-w-2xl text-base leading-7 sm:text-lg",
+              banner ? "text-foreground/80" : "text-white/85",
+            )}
+          >
+            {description}
+          </p>
         ) : null}
       </div>
     </section>

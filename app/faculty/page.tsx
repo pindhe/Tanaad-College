@@ -19,6 +19,7 @@ import { FacultyCard } from "@/components/faculty-card";
 import { Section } from "@/components/section";
 import { buildMetadata } from "@/lib/metadata";
 import { getPublishedStaff } from "@/lib/queries";
+import { cn } from "@/lib/utils";
 
 export const metadata = buildMetadata({
   title: "Faculty & Courses",
@@ -28,10 +29,12 @@ export const metadata = buildMetadata({
 });
 
 const IMAGES = {
-  hero: "/images/imgs/787743859_1817818439793744_5902861751540954248_n.jpg",
-  diploma: "/images/imgs/788901948_1601108978040333_6765133490496336309_n.jpg",
+  hero: "/images/imgs/18.png",
+  diploma: "/images/imgs/5.jpg",
   short: "/images/imgs/500379155_1405416951033897_5714435640946410489_n.jpg",
-  basic: "/images/imgs/790683925_1817997656442489_4589591040991255365_n.jpg",
+  basic: "/images/imgs/7.jpg",
+  dataAnalysis: "/images/imgs/6.jpg",
+  biometric: "/images/imgs/4.jpg",
   campus: "/images/imgs/502997519_1408768317365427_6447797780186284108_n.jpg",
 } as const;
 
@@ -46,12 +49,12 @@ const ictSubjects = [
 
 const shortCourses = [
   { title: "Graphic Design", icon: Palette, image: IMAGES.short },
-  { title: "Video Editing", icon: Video, image: IMAGES.hero },
+  { title: "Video Editing", icon: Video, image: IMAGES.campus },
   { title: "CCTV Camera Installation", icon: Camera, image: IMAGES.campus },
-  { title: "Fingerprint / Biometric Technology", icon: Fingerprint, image: IMAGES.basic },
-  { title: "Data Analysis", icon: LineChart, image: IMAGES.diploma },
+  { title: "Fingerprint / Biometric Technology", icon: Fingerprint, image: IMAGES.biometric, poster: true },
+  { title: "Data Analysis", icon: LineChart, image: IMAGES.dataAnalysis, poster: true },
   { title: "Research Methodology", icon: Search, image: IMAGES.short },
-];
+] as const;
 
 const officeApps = ["Windows 11", "Word", "Excel", "PowerPoint", "Publisher", "Outlook", "Internet training"];
 
@@ -60,10 +63,10 @@ export default async function FacultyPage() {
 
   return (
     <>
-      <section className="relative isolate min-h-[22rem] overflow-hidden bg-primary text-white sm:min-h-[28rem]">
+      <section className="relative isolate min-h-[22rem] overflow-hidden bg-[#F7F8FC] text-primary sm:min-h-[28rem]">
         <Image
           src={IMAGES.hero}
-          alt="Tanaad College graduates"
+          alt="Welcome to Tanaad College"
           fill
           priority
           className="object-cover object-center"
@@ -73,15 +76,15 @@ export default async function FacultyPage() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(105deg, rgba(12,1,155,0.94) 0%, rgba(12,1,155,0.82) 48%, rgba(12,1,155,0.55) 100%)",
+              "linear-gradient(105deg, rgba(247,248,252,0.94) 0%, rgba(247,248,252,0.82) 38%, rgba(247,248,252,0.35) 68%, rgba(247,248,252,0.08) 100%)",
           }}
         />
         <div className="relative mx-auto flex min-h-[22rem] max-w-6xl flex-col justify-center px-4 py-16 sm:min-h-[28rem] sm:px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary">Faculty of ICT</p>
-          <h1 className="mt-3 max-w-3xl font-heading text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 className="mt-3 max-w-3xl font-heading text-4xl font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">
             Courses built for technology careers
           </h1>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-white/85 sm:text-lg">
+          <p className="mt-5 max-w-2xl text-base leading-7 text-foreground/80 sm:text-lg">
             Diploma of ICT, short professional courses, and foundational computer training at Tanaad College.
           </p>
         </div>
@@ -89,12 +92,12 @@ export default async function FacultyPage() {
 
       <Section>
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
-          <div className="relative min-h-[20rem] overflow-hidden rounded-2xl shadow-lg sm:min-h-[24rem]">
+          <div className="relative min-h-[20rem] overflow-hidden rounded-2xl bg-white shadow-lg sm:min-h-[24rem]">
             <Image
               src={IMAGES.diploma}
-              alt="Honor of ICT award at Tanaad College"
+              alt="Complete Diploma of ICT at Tanaad College"
               fill
-              className="object-cover"
+              className="object-contain p-2"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
           </div>
@@ -132,16 +135,23 @@ export default async function FacultyPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {shortCourses.map((course) => (
             <article key={course.title} className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
-              <div className="relative h-44">
+              <div className={cn("relative bg-white", course.poster ? "h-52" : "h-44")}>
                 <Image
                   src={course.image}
                   alt={course.title}
                   fill
-                  className="object-cover"
+                  className={course.poster ? "object-contain p-2" : "object-cover"}
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/70 to-transparent" />
-                <course.icon className="absolute bottom-4 left-4 h-7 w-7 text-secondary" />
+                {!course.poster ? (
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/70 to-transparent" />
+                ) : null}
+                <course.icon
+                  className={cn(
+                    "absolute bottom-4 left-4 h-7 w-7 text-secondary",
+                    course.poster && "rounded-full bg-primary/90 p-1.5 shadow-md",
+                  )}
+                />
               </div>
               <div className="p-5">
                 <h3 className="text-lg">{course.title}</h3>
@@ -177,12 +187,12 @@ export default async function FacultyPage() {
               <span>Beginner friendly</span>
             </div>
           </div>
-          <div className="relative order-1 min-h-[20rem] overflow-hidden rounded-2xl shadow-lg sm:min-h-[24rem] lg:order-2">
+          <div className="relative order-1 min-h-[20rem] overflow-hidden rounded-2xl bg-white shadow-lg sm:min-h-[24rem] lg:order-2">
             <Image
               src={IMAGES.basic}
-              alt="Tanaad College students"
+              alt="Basic Computer Application course at Tanaad College"
               fill
-              className="object-cover"
+              className="object-contain p-2"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
           </div>

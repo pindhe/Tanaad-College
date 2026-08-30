@@ -15,10 +15,10 @@ import { getPublishedTestimonials } from "@/lib/queries";
 import { getSettings } from "@/lib/settings";
 
 const IMAGES = {
-  about: "/images/imgs/788901948_1601108978040333_6765133490496336309_n.jpg",
-  diploma: "/images/imgs/788901948_1601108978040333_6765133490496336309_n.jpg",
+  about: "/images/imgs/5.jpg",
+  diploma: "/images/imgs/1.jpg",
   short: "/images/imgs/500379155_1405416951033897_5714435640946410489_n.jpg",
-  basic: "/images/imgs/790683925_1817997656442489_4589591040991255365_n.jpg",
+  basic: "/images/imgs/20.jpg",
 } as const;
 
 const courses = [
@@ -74,19 +74,14 @@ export default async function HomePage() {
 
       <Section>
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-          <div className="relative min-h-[20rem] overflow-hidden rounded-2xl shadow-xl sm:min-h-[26rem]">
+          <div className="relative min-h-[20rem] overflow-hidden rounded-2xl bg-white shadow-xl sm:min-h-[26rem]">
             <Image
               src={IMAGES.about}
-              alt="Tanaad College — Honor of ICT"
+              alt="Complete Diploma of ICT at Tanaad College"
               fill
-              className="object-cover"
+              className="object-contain p-2"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8">
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">Hargeisa</p>
-              <p className="mt-2 text-xl font-semibold">Near Telesom Headquarters</p>
-            </div>
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">About us</p>
