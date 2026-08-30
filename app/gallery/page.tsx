@@ -41,13 +41,6 @@ export default async function GalleryPage() {
         </div>
         <GalleryGrid items={items} />
       </Section>
-
-      <CtaSection
-        title="See the college in person"
-        description="Visit campus or contact us to learn more about Tanaad College and our ICT programs."
-        actionLabel="Contact us"
-        href="/contact"
-      />
     </>
   );
 }
