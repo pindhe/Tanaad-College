@@ -245,10 +245,10 @@ model SiteSettings {
   heroTitle          String @default("Build Your Future With Tanaad College")
   heroDescription    String @default("Quality education, practical skills, and a brighter future start here.")
   heroImage          String?
-  phone              String @default("[Official Phone]")
-  email              String @default("[Official Email]")
-  address            String @default("[Official Address]")
-  whatsapp           String @default("")
+  phone              String @default("+252 63 8555522")
+  email              String @default("tanaadcollege@gmail.com")
+  address            String @default("Near Telesom Headquarters, Hargeisa, Somalia")
+  whatsapp           String @default("+252638555522")
   facebook           String?
   instagram          String?
   tiktok             String?

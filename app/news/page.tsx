@@ -2,7 +2,7 @@ import { NewsCard } from "@/components/news-card";
 import { PageHeader } from "@/components/page-header";
 import { Section } from "@/components/section";
 import { buildMetadata } from "@/lib/metadata";
-import { prisma } from "@/lib/prisma";
+import { getLatestNews } from "@/lib/queries";
 
 export const metadata = buildMetadata({
   title: "News",
@@ -11,11 +11,7 @@ export const metadata = buildMetadata({
 });
 
 export default async function NewsPage() {
-  const items = await prisma.news.findMany({
-    where: { published: true, publishedAt: { lte: new Date() } },
-    include: { author: { select: { name: true } } },
-    orderBy: { publishedAt: "desc" },
-  });
+  const items = await getLatestNews(50);
 
   return (
     <>

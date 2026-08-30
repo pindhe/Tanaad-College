@@ -7,6 +7,7 @@ import { Navbar } from "@/components/navbar";
 import { WhatsAppButton } from "@/components/whatsapp-button";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { defaultLocale, isLocale, isRtl, type AppLocale } from "@/i18n/config";
+import { COLLEGE_LOGO_PATH } from "@/lib/brand";
 import { buildMetadata } from "@/lib/metadata";
 import { getSettings } from "@/lib/settings";
 import "./globals.css";
@@ -39,7 +40,10 @@ export async function generateMetadata(): Promise<Metadata> {
       default: settings.collegeName,
       template: `%s | ${settings.collegeName}`,
     },
-    icons: settings.favicon ? { icon: settings.favicon } : undefined,
+    icons: {
+      icon: settings.favicon || COLLEGE_LOGO_PATH,
+      apple: settings.favicon || COLLEGE_LOGO_PATH,
+    },
   };
 }
 
@@ -63,7 +67,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               collegeName={settings.collegeName}
               logo={settings.logo}
               dictionary={dictionary}
-              locale={locale}
+              phone={settings.phone}
+              facebook={settings.facebook}
+              tiktok={settings.tiktok}
+              whatsapp={settings.whatsapp}
             />
             <main>{children}</main>
             <Footer settings={settings} dictionary={dictionary} />

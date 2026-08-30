@@ -4,15 +4,17 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/section";
 import { buildMetadata } from "@/lib/metadata";
+import { getProgramBySlug } from "@/lib/queries";
 import { prisma } from "@/lib/prisma";
 import { parseLines } from "@/lib/utils";
+import { safeQuery } from "@/lib/safe";
 
 const FALLBACK =
   "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=1600&q=80";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const program = await prisma.program.findUnique({ where: { slug } });
+  const program = await safeQuery(() => prisma.program.findUnique({ where: { slug } }), null);
   if (!program) return {};
   return buildMetadata({
     title: program.name,
@@ -24,10 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ProgramDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const program = await prisma.program.findFirst({
-    where: { slug, published: true },
-    include: { department: { include: { faculty: true } } },
-  });
+  const program = await getProgramBySlug(slug);
   if (!program) notFound();
 
   const jsonLd = {

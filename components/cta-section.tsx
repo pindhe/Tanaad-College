@@ -5,7 +5,7 @@ export function CtaSection({
   title,
   description,
   actionLabel,
-  href = "/apply",
+  href = "/contact",
 }: {
   title: string;
   description: string;

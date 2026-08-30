@@ -2,7 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { PageHeader } from "@/components/page-header";
 import { Section } from "@/components/section";
 import { buildMetadata } from "@/lib/metadata";
-import { prisma } from "@/lib/prisma";
+import { getPublishedFaqs } from "@/lib/queries";
 
 export const metadata = buildMetadata({
   title: "FAQ",
@@ -11,10 +11,7 @@ export const metadata = buildMetadata({
 });
 
 export default async function FaqPage() {
-  const faqs = await prisma.fAQ.findMany({
-    where: { published: true },
-    orderBy: { createdAt: "asc" },
-  });
+  const faqs = await getPublishedFaqs();
 
   return (
     <>

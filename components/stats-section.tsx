@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { GraduationCap, Laptop, MapPin, Users } from "lucide-react";
 
 function useCountUp(target: number, active: boolean) {
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (!active) return;
+    if (!active || target <= 0) return;
     const duration = 1200;
     const start = performance.now();
     let frame = 0;
@@ -50,6 +51,13 @@ function Stat({ label, value }: { label: string; value: number }) {
   );
 }
 
+const highlights = [
+  { label: "Location", value: "Hargeisa", icon: MapPin },
+  { label: "Specialization", value: "IT & Technology", icon: Laptop },
+  { label: "Programs", value: "ICT & Digital Skills", icon: GraduationCap },
+  { label: "Community", value: "Student-Focused", icon: Users },
+];
+
 export function StatsSection({
   students,
   lecturers,
@@ -61,13 +69,39 @@ export function StatsSection({
   programs: number;
   years: number;
 }) {
+  const stats = [
+    { label: "Students", value: students },
+    { label: "Qualified Lecturers", value: lecturers },
+    { label: "Campus Faculties", value: programs },
+    { label: "Years of Excellence", value: years },
+  ].filter((item) => item.value > 0);
+
+  if (stats.length === 0) {
+    return (
+      <section className="border-b border-border bg-white">
+        <div className="mx-auto grid max-w-6xl divide-y divide-border sm:grid-cols-2 lg:grid-cols-4 sm:divide-x sm:divide-y-0">
+          {highlights.map((item) => (
+            <div key={item.label} className="flex items-center gap-4 px-6 py-6 sm:px-8">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <item.icon className="h-5 w-5" />
+              </span>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{item.label}</p>
+                <p className="mt-1 font-semibold text-foreground">{item.value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <section className="bg-navy py-14 text-white">
-      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 md:grid-cols-4">
-        <Stat label="Students" value={students} />
-        <Stat label="Qualified Lecturers" value={lecturers} />
-        <Stat label="Academic Programs" value={programs} />
-        <Stat label="Years of Excellence" value={years} />
+    <section className="bg-primary py-14 text-white">
+      <div className={`mx-auto grid max-w-6xl gap-8 px-4 grid-cols-2 ${stats.length >= 4 ? "md:grid-cols-4" : stats.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
+        {stats.map((item) => (
+          <Stat key={item.label} label={item.label} value={item.value} />
+        ))}
       </div>
     </section>
   );

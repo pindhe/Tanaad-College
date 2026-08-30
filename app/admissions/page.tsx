@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/page-header";
 import { Section } from "@/components/section";
 import { Button } from "@/components/ui/button";
 import { buildMetadata } from "@/lib/metadata";
-import { prisma } from "@/lib/prisma";
+import { getAdmissionDates } from "@/lib/queries";
 import { formatDate } from "@/lib/utils";
 
 export const metadata = buildMetadata({
@@ -22,7 +22,7 @@ const steps = [
 const documents = ["Identification", "Academic certificate", "Passport photo", "Other required documents"];
 
 export default async function AdmissionsPage() {
-  const dates = await prisma.admissionDate.findMany({ orderBy: { date: "asc" } });
+  const dates = await getAdmissionDates();
 
   return (
     <>

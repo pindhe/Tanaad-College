@@ -1,27 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  --background: 210 20% 98%;
-  --foreground: 215 42% 12%;
+  /* Brand: Blue #0C019B | Green #01DC02 | Black #0E0903 | White #FFFFFF */
+  --brand-blue: #0c019b;
+  --brand-green: #01dc02;
+  --brand-black: #0e0903;
+  --brand-white: #ffffff;
+
+  --background: 0 0% 100%;
+  --foreground: 33 65% 3%;
   --card: 0 0% 100%;
-  --card-foreground: 215 42% 12%;
+  --card-foreground: 33 65% 3%;
   --popover: 0 0% 100%;
-  --popover-foreground: 215 42% 12%;
-  --primary: 209 82% 24%;
-  --primary-foreground: 40 33% 98%;
-  --secondary: 43 72% 47%;
-  --secondary-foreground: 215 42% 12%;
-  --muted: 210 20% 94%;
-  --muted-foreground: 215 16% 40%;
-  --accent: 209 45% 92%;
-  --accent-foreground: 209 82% 20%;
+  --popover-foreground: 33 65% 3%;
+  --primary: 244 99% 31%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 120 99% 43%;
+  --secondary-foreground: 33 65% 3%;
+  --muted: 240 10% 96%;
+  --muted-foreground: 33 20% 35%;
+  --accent: 244 60% 95%;
+  --accent-foreground: 244 99% 31%;
   --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
-  --border: 214 20% 88%;
-  --input: 214 20% 88%;
-  --ring: 209 82% 24%;
-  --navy: 215 55% 12%;
-  --gold: 43 72% 47%;
+  --border: 240 12% 90%;
+  --input: 240 12% 90%;
+  --ring: 244 99% 31%;
+  --navy: 244 99% 31%;
+  --gold: 120 99% 43%;
   --radius: 0.75rem;
 }
 
@@ -47,6 +53,10 @@
   --color-ring: hsl(var(--ring));
   --color-navy: hsl(var(--navy));
   --color-gold: hsl(var(--gold));
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-green: var(--brand-green);
+  --color-brand-black: var(--brand-black);
+  --color-brand-white: var(--brand-white);
   --font-sans: var(--font-inter);
   --font-heading: var(--font-poppins);
   --radius-sm: calc(var(--radius) - 4px);

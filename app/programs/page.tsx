@@ -4,7 +4,7 @@ import { Section } from "@/components/section";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getLocale } from "@/i18n/locale";
 import { buildMetadata } from "@/lib/metadata";
-import { prisma } from "@/lib/prisma";
+import { getPublishedPrograms } from "@/lib/queries";
 
 export const metadata = buildMetadata({
   title: "Programs",
@@ -14,11 +14,7 @@ export const metadata = buildMetadata({
 
 export default async function ProgramsPage() {
   const [programs, locale] = await Promise.all([
-    prisma.program.findMany({
-      where: { published: true },
-      include: { department: { include: { faculty: true } } },
-      orderBy: { name: "asc" },
-    }),
+    getPublishedPrograms(),
     getLocale(),
   ]);
   const dictionary = getDictionary(locale);
@@ -29,7 +25,7 @@ export default async function ProgramsPage() {
       <Section>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {programs.map((program) => (
-            <ProgramCard key={program.id} program={program} actionLabel={dictionary.cta.viewProgram} />
+            <ProgramCard key={program.id} program={program} actionLabel={dictionary.common.learnMore} />
           ))}
         </div>
         {programs.length === 0 ? <p className="text-muted-foreground">No published programs are available yet.</p> : null}

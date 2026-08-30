@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Youtube } from "lucide-react";
+import { CollegeLogo } from "@/components/college-logo";
 import type { SiteSettingsData } from "@/types";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
@@ -22,9 +23,12 @@ export function Footer({ settings, dictionary }: { settings: SiteSettingsData; d
 
   return (
     <footer className="bg-navy text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 lg:grid-cols-3">
         <div>
-          <h2 className="font-heading text-xl">{settings.collegeName}</h2>
+          <Link href="/" className="flex items-center gap-3">
+            <CollegeLogo src={settings.logo} size="lg" />
+            <h2 className="font-heading text-xl">{settings.collegeName}</h2>
+          </Link>
           <p className="mt-4 max-w-xs text-sm leading-6 text-white/70">
             Quality education, practical skills, and a brighter future start here.
           </p>
@@ -51,23 +55,10 @@ export function Footer({ settings, dictionary }: { settings: SiteSettingsData; d
           <ul className="mt-4 space-y-2 text-sm text-white/75">
             <li><Link href="/">{dictionary.nav.home}</Link></li>
             <li><Link href="/about">{dictionary.nav.about}</Link></li>
-            <li><Link href="/programs">{dictionary.nav.programs}</Link></li>
-            <li><Link href="/admissions">{dictionary.nav.admissions}</Link></li>
             <li><Link href="/faculty">{dictionary.nav.faculty}</Link></li>
-            <li><Link href="/news">{dictionary.nav.news}</Link></li>
-            <li><Link href="/events">{dictionary.nav.events}</Link></li>
             <li><Link href="/gallery">{dictionary.nav.gallery}</Link></li>
-            <li><Link href="/contact">{dictionary.nav.contact}</Link></li>
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-secondary">Admissions</h3>
-          <ul className="mt-4 space-y-2 text-sm text-white/75">
-            <li><Link href="/apply">{dictionary.nav.applyNow}</Link></li>
-            <li><Link href="/admissions">Requirements</Link></li>
-            <li><Link href="/application-status">Application Status</Link></li>
             <li><Link href="/faq">FAQ</Link></li>
+            <li><Link href="/contact">{dictionary.nav.contact}</Link></li>
           </ul>
         </div>
 

@@ -2,36 +2,23 @@
   "nav": {
     "home": "Bogga Hore",
     "about": "Nagu Saabsan",
-    "programs": "Barnaamijyada",
-    "admissions": "Gelitaanka",
-    "faculty": "Macallimiinta",
-    "studentLife": "Nolosha Ardayga",
-    "news": "Wararka",
-    "events": "Dhacdooyinka",
+    "faculty": "Koorsooyinka",
     "gallery": "Sawirada",
-    "contact": "Xiriir",
-    "applyNow": "Hadda Codso",
-    "search": "Raadi"
+    "contact": "Xiriir"
   },
   "hero": {
-    "apply": "Hadda Codso",
-    "explore": "Baadh Barnaamijyada",
     "quality": "Waxbarasho Tayo leh",
     "lecturers": "Macallimiin Khibrad leh",
     "studentFocused": "Waxbarasho Arday-u-jeeda"
   },
   "cta": {
-    "applyToday": "Maanta Codso",
-    "startApplication": "Bilow Codsigaaga",
-    "viewProgram": "Eeg Barnaamijka",
-    "applyThisProgram": "Codso Barnaamijkan"
+    "learnMore": "Wax badan ogow"
   },
   "common": {
     "learnMore": "Wax badan ogow",
     "readMore": "Akhri wax badan",
     "viewAll": "Dhammaan eeg",
     "submit": "Dir",
-    "sending": "Waa la dirayaa...",
-    "searchPlaceholder": "Raadi barnaamijyo, warar, dhacdooyin, macallimiin"
+    "sending": "Waa la dirayaa..."
   }
 }

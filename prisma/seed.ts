@@ -20,16 +20,27 @@ async function main() {
 
   await prisma.siteSettings.upsert({
     where: { id: "default" },
-    update: {},
+    update: {
+      logo: "/images/logo.png",
+      favicon: "/images/logo.png",
+      phone: "+252 63 8555522",
+      email: "tanaadcollege@gmail.com",
+      address: "Near Telesom Headquarters, Hargeisa, Somalia",
+      whatsapp: "+252638555522",
+      facebook: "https://www.facebook.com/105796400780549",
+    },
     create: {
       id: "default",
       collegeName: "Tanaad College",
+      logo: "/images/logo.png",
+      favicon: "/images/logo.png",
       heroTitle: "Build Your Future With Tanaad College",
       heroDescription: "Quality education, practical skills, and a brighter future start here.",
-      phone: "[Official Phone]",
-      email: "[Official Email]",
-      address: "[Official Address]",
-      whatsapp: "",
+      phone: "+252 63 8555522",
+      email: "tanaadcollege@gmail.com",
+      address: "Near Telesom Headquarters, Hargeisa, Somalia",
+      whatsapp: "+252638555522",
+      facebook: "https://www.facebook.com/105796400780549",
       aboutText: "[Official About]",
       historyText: "[Official History]",
       vision: "[Official Vision]",
@@ -224,11 +235,11 @@ async function main() {
 
   await prisma.fAQ.createMany({
     data: [
-      { question: "How can I apply?", answer: "Use the Apply Now form and submit the required documents.", category: "Admissions", published: true },
-      { question: "What programs are available?", answer: "Published programs are listed on the Programs page.", category: "Programs", published: true },
-      { question: "What are the admission requirements?", answer: "[Official Admission Requirements] See the Admissions page and each program page.", category: "Admissions", published: true },
-      { question: "How can I contact admissions?", answer: "Use the Contact page, phone, email, or WhatsApp details from site settings.", category: "Contact", published: true },
-      { question: "Where is Tanaad College located?", answer: "[Official Address] The address is maintained in site settings.", category: "Contact", published: true },
+      { question: "Where is Tanaad College located?", answer: "Near Telesom Headquarters, Hargeisa, Somaliland.", category: "General", published: true },
+      { question: "How can I contact the college?", answer: "Use the Contact page, phone, email, or WhatsApp details on the website.", category: "Contact", published: true },
+      { question: "How can I visit the campus?", answer: "Contact the college to arrange a visit. See the Contact page for phone and email.", category: "Contact", published: true },
+      { question: "What courses are available?", answer: "See the Courses page for Diploma of ICT, short professional courses, and Basic Computer Applications.", category: "Courses", published: true },
+      { question: "Where is Tanaad College located?", answer: "Near Telesom Headquarters, Hargeisa, Somalia.", category: "Contact", published: true },
     ],
     skipDuplicates: true,
   });

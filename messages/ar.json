@@ -2,36 +2,23 @@
   "nav": {
     "home": "الرئيسية",
     "about": "من نحن",
-    "programs": "البرامج",
-    "admissions": "القبول",
-    "faculty": "أعضاء هيئة التدريس",
-    "studentLife": "حياة الطلاب",
-    "news": "الأخبار",
-    "events": "الفعاليات",
+    "faculty": "الدورات",
     "gallery": "المعرض",
-    "contact": "اتصل بنا",
-    "applyNow": "قدّم الآن",
-    "search": "بحث"
+    "contact": "اتصل بنا"
   },
   "hero": {
-    "apply": "قدّم الآن",
-    "explore": "استكشف البرامج",
     "quality": "تعليم ذو جودة",
     "lecturers": "محاضرون ذوو خبرة",
     "studentFocused": "تعلم يركز على الطالب"
   },
   "cta": {
-    "applyToday": "قدّم اليوم",
-    "startApplication": "ابدأ طلبك",
-    "viewProgram": "عرض البرنامج",
-    "applyThisProgram": "قدّم لهذا البرنامج"
+    "learnMore": "اعرف المزيد"
   },
   "common": {
     "learnMore": "اعرف المزيد",
     "readMore": "اقرأ المزيد",
     "viewAll": "عرض الكل",
     "submit": "إرسال",
-    "sending": "جارٍ الإرسال...",
-    "searchPlaceholder": "ابحث في البرامج والأخبار والفعاليات وهيئة التدريس"
+    "sending": "جارٍ الإرسال..."
   }
 }

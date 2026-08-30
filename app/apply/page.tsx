@@ -2,7 +2,7 @@ import { ApplyForm } from "@/components/apply-form";
 import { PageHeader } from "@/components/page-header";
 import { Section } from "@/components/section";
 import { buildMetadata } from "@/lib/metadata";
-import { prisma } from "@/lib/prisma";
+import { getApplyOptions } from "@/lib/queries";
 
 export const metadata = buildMetadata({
   title: "Apply",
@@ -11,15 +11,7 @@ export const metadata = buildMetadata({
 });
 
 export default async function ApplyPage() {
-  const [faculties, departments, programs] = await Promise.all([
-    prisma.faculty.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.department.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, facultyId: true } }),
-    prisma.program.findMany({
-      where: { published: true },
-      orderBy: { name: "asc" },
-      select: { id: true, name: true, departmentId: true },
-    }),
-  ]);
+  const { faculties, departments, programs } = await getApplyOptions();
 
   return (
     <>

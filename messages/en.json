@@ -2,36 +2,23 @@
   "nav": {
     "home": "Home",
     "about": "About",
-    "programs": "Programs",
-    "admissions": "Admissions",
-    "faculty": "Faculty",
-    "studentLife": "Student Life",
-    "news": "News",
-    "events": "Events",
+    "faculty": "Courses",
     "gallery": "Gallery",
-    "contact": "Contact",
-    "applyNow": "Apply Now",
-    "search": "Search"
+    "contact": "Contact"
   },
   "hero": {
-    "apply": "Apply Now",
-    "explore": "Explore Programs",
     "quality": "Quality Education",
     "lecturers": "Experienced Lecturers",
     "studentFocused": "Student-Focused Learning"
   },
   "cta": {
-    "applyToday": "Apply Today",
-    "startApplication": "Start Your Application",
-    "viewProgram": "View Program",
-    "applyThisProgram": "Apply for This Program"
+    "learnMore": "Learn More"
   },
   "common": {
     "learnMore": "Learn more",
     "readMore": "Read more",
     "viewAll": "View all",
     "submit": "Submit",
-    "sending": "Sending...",
-    "searchPlaceholder": "Search programs, news, events, faculty"
+    "sending": "Sending..."
   }
 }

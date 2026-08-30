@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { auth, signOut } from "@/auth";
+import { CollegeLogo } from "@/components/college-logo";
 import { adminNav } from "@/lib/permissions";
 import { Button } from "@/components/ui/button";
 
@@ -11,7 +12,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       {session?.user ? (
         <div className="grid min-h-screen lg:grid-cols-[260px_1fr]">
           <aside className="bg-navy p-6 text-white">
-            <Link href="/admin" className="block font-heading text-lg">Tanaad Admin</Link>
+            <Link href="/admin" className="flex items-center gap-3">
+              <CollegeLogo size="sm" />
+              <span className="font-heading text-lg">Tanaad Admin</span>
+            </Link>
             <p className="mt-1 text-xs text-white/60">{session.user.role.replaceAll("_", " ")}</p>
             <nav className="mt-8 flex flex-col gap-1" aria-label="Admin">
               {adminNav

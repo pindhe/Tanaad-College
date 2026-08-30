@@ -4,7 +4,9 @@ import { NewsCard } from "@/components/news-card";
 import { Section } from "@/components/section";
 import { ShareButtons } from "@/components/share-buttons";
 import { buildMetadata } from "@/lib/metadata";
+import { getNewsBySlug, getRelatedNews } from "@/lib/queries";
 import { prisma } from "@/lib/prisma";
+import { safeQuery } from "@/lib/safe";
 import { absoluteUrl, formatDate } from "@/lib/utils";
 
 const FALLBACK =
@@ -12,7 +14,7 @@ const FALLBACK =
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const item = await prisma.news.findUnique({ where: { slug } });
+  const item = await safeQuery(() => prisma.news.findUnique({ where: { slug } }), null);
   if (!item) return {};
   return buildMetadata({
     title: item.title,
@@ -24,18 +26,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function NewsDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const item = await prisma.news.findFirst({
-    where: { slug, published: true },
-    include: { author: { select: { name: true } } },
-  });
+  const item = await getNewsBySlug(slug);
   if (!item) notFound();
 
-  const related = await prisma.news.findMany({
-    where: { published: true, id: { not: item.id }, category: item.category },
-    include: { author: { select: { name: true } } },
-    take: 3,
-    orderBy: { publishedAt: "desc" },
-  });
+  const related = await getRelatedNews(item.id, item.category);
 
   const jsonLd = {
     "@context": "https://schema.org",

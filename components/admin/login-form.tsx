@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { CollegeLogo } from "@/components/college-logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,7 +34,10 @@ export function AdminLoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-navy px-4">
       <form action={onSubmit} className="w-full max-w-md space-y-4 rounded-xl bg-white p-8 shadow-xl">
-        <h1 className="text-2xl">Admin sign in</h1>
+        <div className="flex flex-col items-center gap-3">
+          <CollegeLogo size="xl" />
+          <h1 className="text-2xl">Admin sign in</h1>
+        </div>
         <p className="text-sm text-muted-foreground">Authorized staff only.</p>
         <div>
           <Label htmlFor="email">Email</Label>

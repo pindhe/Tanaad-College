@@ -2,7 +2,7 @@ import { EventCard } from "@/components/event-card";
 import { PageHeader } from "@/components/page-header";
 import { Section } from "@/components/section";
 import { buildMetadata } from "@/lib/metadata";
-import { prisma } from "@/lib/prisma";
+import { getPublishedEvents } from "@/lib/queries";
 
 export const metadata = buildMetadata({
   title: "Events",
@@ -12,10 +12,7 @@ export const metadata = buildMetadata({
 
 export default async function EventsPage() {
   const now = new Date();
-  const events = await prisma.event.findMany({
-    where: { published: true },
-    orderBy: { eventDate: "asc" },
-  });
+  const events = await getPublishedEvents();
   const upcoming = events.filter((item) => item.eventDate >= now);
   const past = events.filter((item) => item.eventDate < now);
 

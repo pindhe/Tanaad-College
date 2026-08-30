@@ -225,10 +225,6 @@ export const admissionDateSchema = z.object({
   description: z.string().optional().or(z.literal("")),
 });
 
-export const searchSchema = z.object({
-  q: z.string().min(1).max(120),
-});
-
 export type ApplicationInput = z.infer<typeof applicationSchema>;
 export type ContactInput = z.infer<typeof contactSchema>;
 export type ProgramInput = z.infer<typeof programSchema>;

@@ -1,84 +1,190 @@
+import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, Code2, Laptop, Mail, MapPin, Monitor, Phone } from "lucide-react";
 import { Hero } from "@/components/hero";
 import { StatsSection } from "@/components/stats-section";
 import { WhyChoose } from "@/components/why-choose";
-import { ProgramCard } from "@/components/program-card";
-import { NewsCard } from "@/components/news-card";
 import { TestimonialCard } from "@/components/testimonial-card";
-import { CtaSection } from "@/components/cta-section";
 import { Section } from "@/components/section";
 import { Button } from "@/components/ui/button";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getLocale } from "@/i18n/locale";
+import { GALLERY_FALLBACK } from "@/lib/gallery-fallback";
 import { collegeJsonLd } from "@/lib/metadata";
-import { prisma } from "@/lib/prisma";
+import { getPublishedTestimonials } from "@/lib/queries";
 import { getSettings } from "@/lib/settings";
 
+const IMAGES = {
+  about: "/images/imgs/788901948_1601108978040333_6765133490496336309_n.jpg",
+  diploma: "/images/imgs/788901948_1601108978040333_6765133490496336309_n.jpg",
+  short: "/images/imgs/500379155_1405416951033897_5714435640946410489_n.jpg",
+  basic: "/images/imgs/790683925_1817997656442489_4589591040991255365_n.jpg",
+} as const;
+
+const courses = [
+  {
+    title: "Diploma of ICT",
+    text: "C#, SQL Server, networking, web design, multimedia, and hardware.",
+    href: "/faculty",
+    image: IMAGES.diploma,
+    icon: Code2,
+  },
+  {
+    title: "Professional Courses",
+    text: "Graphic design, video editing, CCTV, biometrics, and data analysis.",
+    href: "/faculty",
+    image: IMAGES.short,
+    icon: Laptop,
+  },
+  {
+    title: "Basic Computer Applications",
+    text: "Windows 11, Microsoft Office, and internet training — 3 months.",
+    href: "/faculty",
+    image: IMAGES.basic,
+    icon: Monitor,
+  },
+];
+
 export default async function HomePage() {
-  const [settings, locale, programs, news, testimonials] = await Promise.all([
+  const [settings, locale, testimonials] = await Promise.all([
     getSettings(),
     getLocale(),
-    prisma.program.findMany({
-      where: { published: true, featured: true },
-      include: { department: { include: { faculty: true } } },
-      take: 6,
-      orderBy: { name: "asc" },
-    }),
-    prisma.news.findMany({
-      where: { published: true, publishedAt: { lte: new Date() } },
-      include: { author: { select: { name: true } } },
-      orderBy: { publishedAt: "desc" },
-      take: 3,
-    }),
-    prisma.testimonial.findMany({
-      where: { published: true },
-      orderBy: { createdAt: "desc" },
-      take: 3,
-    }),
+    getPublishedTestimonials(3),
   ]);
   const dictionary = getDictionary(locale);
+  const galleryPreview = GALLERY_FALLBACK.slice(0, 4);
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collegeJsonLd(settings)) }} />
+
       <Hero
         title={settings.heroTitle}
         description={settings.heroDescription}
-        image={settings.heroImage}
         dictionary={dictionary}
+        logo={settings.logo}
       />
+
       <StatsSection
         students={settings.statsStudents}
         lecturers={settings.statsLecturers}
         programs={settings.statsPrograms}
         years={settings.statsYears}
       />
-      <WhyChoose />
+
       <Section>
-        <div className="mb-10 flex items-end justify-between gap-4">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <div className="relative min-h-[20rem] overflow-hidden rounded-2xl shadow-xl sm:min-h-[26rem]">
+            <Image
+              src={IMAGES.about}
+              alt="Tanaad College — Honor of ICT"
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-8">
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">Hargeisa</p>
+              <p className="mt-2 text-xl font-semibold">Near Telesom Headquarters</p>
+            </div>
+          </div>
           <div>
-            <h2 className="text-3xl">Featured Programs</h2>
-            <p className="mt-2 text-muted-foreground">Explore academic offerings managed by the college.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">About us</p>
+            <h2 className="mt-3 text-3xl sm:text-4xl">Center of Leading IT & Technology</h2>
+            <p className="mt-5 leading-7 text-muted-foreground">
+              Tanaad College delivers practical ICT education in Hargeisa — from diploma programs to short professional
+              courses and computer foundations for beginners.
+            </p>
+            <p className="mt-4 leading-7 text-muted-foreground">
+              We focus on quality teaching, hands-on skills, and preparing students for technology careers in Somaliland.
+            </p>
+            <Button asChild className="mt-8" size="lg">
+              <Link href="/about">
+                Learn more
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </Section>
+
+      <Section className="bg-muted/50">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Programs</p>
+            <h2 className="mt-3 text-3xl sm:text-4xl">Our courses</h2>
+            <p className="mt-4 text-muted-foreground">ICT diploma, professional skills, and foundational computer training.</p>
           </div>
           <Button asChild variant="outline">
-            <Link href="/programs">{dictionary.hero.explore}</Link>
+            <Link href="/faculty">View all courses</Link>
           </Button>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {programs.map((program) => (
-            <ProgramCard key={program.id} program={program} actionLabel={dictionary.cta.viewProgram} />
+        <div className="grid gap-6 md:grid-cols-3">
+          {courses.map((course) => (
+            <Link
+              key={course.title}
+              href={course.href}
+              className="group overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="relative h-44">
+                <Image
+                  src={course.image}
+                  alt={course.title}
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
+                <course.icon className="absolute bottom-4 left-4 h-7 w-7 text-secondary" />
+              </div>
+              <div className="p-5">
+                <h3 className="text-lg font-semibold group-hover:text-primary">{course.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{course.text}</p>
+              </div>
+            </Link>
           ))}
         </div>
-        {programs.length === 0 ? <p className="text-muted-foreground">Programs will appear here once published in the admin dashboard.</p> : null}
       </Section>
-      <CtaSection
-        title="Start Your Application"
-        description="Begin your admission process online and receive a reference number you can track."
-        actionLabel={dictionary.cta.startApplication}
-      />
+
+      <WhyChoose />
+
+      <Section className="bg-muted/50">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Gallery</p>
+            <h2 className="mt-3 text-3xl sm:text-4xl">Campus life</h2>
+          </div>
+          <Button asChild variant="outline">
+            <Link href="/gallery">View gallery</Link>
+          </Button>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {galleryPreview.map((item) => (
+            <Link
+              key={item.id}
+              href="/gallery"
+              className="group relative aspect-[4/3] overflow-hidden rounded-2xl"
+            >
+              <Image
+                src={item.image}
+                alt={item.title}
+                fill
+                className="object-cover transition duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-90" />
+              <p className="absolute inset-x-0 bottom-0 p-4 text-sm font-semibold text-white">{item.title}</p>
+            </Link>
+          ))}
+        </div>
+      </Section>
+
       {testimonials.length > 0 ? (
-        <Section className="bg-muted/50">
-          <h2 className="mb-10 text-center text-3xl">What Our Students Say</h2>
+        <Section>
+          <div className="mb-10 text-center">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Testimonials</p>
+            <h2 className="mt-3 text-3xl sm:text-4xl">What our students say</h2>
+          </div>
           <div className="grid gap-6 md:grid-cols-3">
             {testimonials.map((item) => (
               <TestimonialCard key={item.id} item={item} />
@@ -86,22 +192,32 @@ export default async function HomePage() {
           </div>
         </Section>
       ) : null}
-      <Section>
-        <div className="mb-10 flex items-end justify-between gap-4">
-          <h2 className="text-3xl">College News</h2>
-          <Button asChild variant="outline"><Link href="/news">View all</Link></Button>
+
+      <section className="border-y border-border bg-white">
+        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-12 sm:grid-cols-3 sm:px-6">
+          <a href={`tel:${settings.phone.replace(/[^\d+]/g, "")}`} className="flex items-start gap-4 rounded-2xl p-4 transition hover:bg-muted/50">
+            <Phone className="mt-0.5 h-5 w-5 shrink-0 text-secondary" />
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Call us</p>
+              <p className="mt-1 font-semibold text-primary">{settings.phone}</p>
+            </div>
+          </a>
+          <a href={`mailto:${settings.email}`} className="flex items-start gap-4 rounded-2xl p-4 transition hover:bg-muted/50">
+            <Mail className="mt-0.5 h-5 w-5 shrink-0 text-secondary" />
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Email</p>
+              <p className="mt-1 break-all font-semibold text-primary">{settings.email}</p>
+            </div>
+          </a>
+          <div className="flex items-start gap-4 rounded-2xl p-4">
+            <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-secondary" />
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Visit</p>
+              <p className="mt-1 font-semibold text-foreground">{settings.address}</p>
+            </div>
+          </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
-          {news.map((item) => (
-            <NewsCard key={item.id} item={item} />
-          ))}
-        </div>
-      </Section>
-      <CtaSection
-        title="Your Future Starts Here"
-        description="Quality education, practical skills, and a brighter future start here."
-        actionLabel={dictionary.cta.applyToday}
-      />
+      </section>
     </>
   );
 }
