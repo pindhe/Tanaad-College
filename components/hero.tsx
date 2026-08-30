@@ -19,21 +19,9 @@ export const HERO_SLIDES = [
 const SLIDE_INTERVAL_MS = 5000;
 
 const slideVariants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? "8%" : "-8%",
-    opacity: 0,
-    scale: 1.04,
-  }),
-  center: {
-    x: 0,
-    opacity: 1,
-    scale: 1,
-  },
-  exit: (direction: number) => ({
-    x: direction > 0 ? "-8%" : "8%",
-    opacity: 0,
-    scale: 1.02,
-  }),
+  enter: { opacity: 0, scale: 1.03 },
+  center: { opacity: 1, scale: 1 },
+  exit: { opacity: 0, scale: 1.01 },
 };
 
 const mobileStagger = {
@@ -109,15 +97,14 @@ function HeroSlideImage({
 }) {
   return (
     <div className={cn("relative overflow-hidden", className)}>
-      <AnimatePresence initial={false} custom={direction} mode="popLayout">
+      <AnimatePresence initial={false} mode="sync">
         <motion.div
           key={HERO_SLIDES[index]}
-          custom={direction}
           variants={slideVariants}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
           className="absolute inset-0"
         >
           <Image
@@ -259,10 +246,10 @@ export function Hero({
         <HeroHighlights items={highlights} />
       </div>
 
-      {/* Desktop — professional split layout with soft blend */}
-      <div className="relative mx-auto hidden max-w-[1400px] lg:grid lg:min-h-[calc(100vh-7.5rem)] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+      {/* Desktop — split layout: content left, full image right */}
+      <div className="relative hidden lg:flex lg:min-h-[calc(100vh-7.5rem)]">
         {/* Left content panel */}
-        <div className="relative z-20 flex flex-col justify-center px-10 py-16 xl:px-14 xl:py-20">
+        <div className="relative z-10 flex w-[44%] max-w-[640px] shrink-0 flex-col justify-center bg-[#F7F8FC] px-10 py-16 xl:w-[46%] xl:px-14 xl:py-20">
           <div
             className="pointer-events-none absolute inset-0 opacity-[0.45]"
             style={{
@@ -271,14 +258,7 @@ export function Hero({
               backgroundSize: "28px 28px",
             }}
           />
-          <div
-            className="pointer-events-none absolute inset-y-0 end-0 w-24"
-            style={{
-              background: "linear-gradient(90deg, transparent 0%, #F7F8FC 100%)",
-            }}
-          />
-
-          <div className="relative">
+          <div className="relative z-10">
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -353,18 +333,15 @@ export function Hero({
           </div>
         </div>
 
-        {/* Right image panel — blends into left */}
-        <div className="relative min-h-[34rem]">
-          <HeroSlideImage index={index} direction={direction} className="absolute inset-0" sizes="50vw" />
+        {/* Right image panel — full bleed to screen edge */}
+        <div className="relative min-h-[calc(100vh-7.5rem)] flex-1">
+          <HeroSlideImage index={index} direction={direction} className="absolute inset-0 h-full w-full" sizes="55vw" />
 
-          {/* Soft mix gradient — photo fades into left panel */}
+          {/* Narrow seam blend only at the join with left panel */}
           <div
-            className="pointer-events-none absolute inset-0 z-10"
+            className="pointer-events-none absolute inset-y-0 start-0 z-10 w-20 xl:w-28"
             style={{
-              background: [
-                "linear-gradient(90deg, #F7F8FC 0%, rgba(247,248,252,0.98) 8%, rgba(247,248,252,0.9) 14%, rgba(247,248,252,0.72) 22%, rgba(247,248,252,0.42) 32%, rgba(247,248,252,0.16) 42%, transparent 54%)",
-                "linear-gradient(180deg, rgba(247,248,252,0.08) 0%, transparent 18%, transparent 72%, rgba(12,1,155,0.12) 100%)",
-              ].join(", "),
+              background: "linear-gradient(90deg, #F7F8FC 0%, rgba(247,248,252,0.75) 35%, transparent 100%)",
             }}
           />
 
