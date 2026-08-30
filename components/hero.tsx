@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -20,16 +20,19 @@ const SLIDE_INTERVAL_MS = 5000;
 
 const slideVariants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? "100%" : "-100%",
-    opacity: 0.4,
+    x: direction > 0 ? "8%" : "-8%",
+    opacity: 0,
+    scale: 1.04,
   }),
   center: {
     x: 0,
     opacity: 1,
+    scale: 1,
   },
   exit: (direction: number) => ({
-    x: direction > 0 ? "-100%" : "100%",
-    opacity: 0.4,
+    x: direction > 0 ? "-8%" : "8%",
+    opacity: 0,
+    scale: 1.02,
   }),
 };
 
@@ -38,22 +41,17 @@ const mobileStagger = {
   animate: { opacity: 1, y: 0 },
 };
 
-function HeroSlideshow({
-  className,
-  sizes,
-  dotClassName,
-}: {
-  className?: string;
-  sizes: string;
-  dotClassName?: string;
-}) {
+function useHeroSlideshow() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
 
-  const goToSlide = (nextIndex: number) => {
-    setDirection(nextIndex > index || (index === HERO_SLIDES.length - 1 && nextIndex === 0) ? 1 : -1);
-    setIndex(nextIndex);
-  };
+  const goToSlide = useCallback(
+    (nextIndex: number) => {
+      setDirection(nextIndex > index || (index === HERO_SLIDES.length - 1 && nextIndex === 0) ? 1 : -1);
+      setIndex(nextIndex);
+    },
+    [index],
+  );
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -64,9 +62,54 @@ function HeroSlideshow({
     return () => window.clearInterval(timer);
   }, []);
 
+  return { index, direction, goToSlide };
+}
+
+function HeroSlideDots({
+  index,
+  goToSlide,
+  className,
+  variant = "light",
+}: {
+  index: number;
+  goToSlide: (next: number) => void;
+  className?: string;
+  variant?: "light" | "dark";
+}) {
+  return (
+    <div className={cn("flex items-center gap-2", className)}>
+      {HERO_SLIDES.map((slide, slideIndex) => (
+        <button
+          key={slide}
+          type="button"
+          aria-label={`Show slide ${slideIndex + 1}`}
+          onClick={() => goToSlide(slideIndex)}
+          className={cn(
+            "h-1.5 rounded-full transition-all duration-300",
+            slideIndex === index
+              ? cn("w-8", variant === "light" ? "bg-primary" : "bg-secondary")
+              : cn("w-1.5", variant === "light" ? "bg-primary/25 hover:bg-primary/40" : "bg-white/55 hover:bg-white"),
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+function HeroSlideImage({
+  index,
+  direction,
+  className,
+  sizes,
+}: {
+  index: number;
+  direction: number;
+  className?: string;
+  sizes: string;
+}) {
   return (
     <div className={cn("relative overflow-hidden", className)}>
-      <AnimatePresence initial={false} custom={direction}>
+      <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={HERO_SLIDES[index]}
           custom={direction}
@@ -74,7 +117,7 @@ function HeroSlideshow({
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.85, ease: "easeInOut" }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="absolute inset-0"
         >
           <Image
@@ -87,21 +130,6 @@ function HeroSlideshow({
           />
         </motion.div>
       </AnimatePresence>
-
-      <div className={cn("absolute inset-x-0 bottom-5 z-10 flex justify-center gap-2 lg:bottom-6", dotClassName)}>
-        {HERO_SLIDES.map((slide, slideIndex) => (
-          <button
-            key={slide}
-            type="button"
-            aria-label={`Show slide ${slideIndex + 1}`}
-            onClick={() => goToSlide(slideIndex)}
-            className={cn(
-              "h-1.5 rounded-full transition-all duration-300",
-              slideIndex === index ? "w-7 bg-secondary" : "w-1.5 bg-white/60 hover:bg-white",
-            )}
-          />
-        ))}
-      </div>
     </div>
   );
 }
@@ -112,12 +140,27 @@ function HeroHighlights({ items }: { items: string[] }) {
       {items.map((item) => (
         <div
           key={item}
-          className="rounded-xl border border-border/80 bg-white/90 px-4 py-3 text-sm font-medium text-foreground shadow-sm backdrop-blur-sm"
+          className="rounded-xl border border-border/70 bg-white/95 px-4 py-3.5 text-sm font-medium text-foreground shadow-sm"
         >
           <span className="mb-2 block h-1 w-8 rounded-full bg-secondary" />
           {item}
         </div>
       ))}
+    </div>
+  );
+}
+
+function LocationCard({ className }: { className?: string }) {
+  return (
+    <div className={cn("rounded-2xl border border-white/20 bg-primary/92 p-5 shadow-2xl backdrop-blur-md sm:p-6", className)}>
+      <div className="flex items-start gap-3 text-white">
+        <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-secondary" />
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary">Hargeisa</p>
+          <p className="mt-1 text-base font-semibold">Near Telesom Headquarters</p>
+          <p className="mt-2 text-sm leading-6 text-white/80">Practical ICT education for today&apos;s digital careers.</p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -134,24 +177,13 @@ export function Hero({
   logo?: string | null;
 }) {
   const highlights = [dictionary.hero.quality, dictionary.hero.lecturers, dictionary.hero.studentFocused];
+  const { index, direction, goToSlide } = useHeroSlideshow();
 
   return (
     <section className="relative overflow-hidden bg-[#F7F8FC]">
-      <HeroSlideshow className="absolute inset-y-0 end-0 hidden w-[58%] lg:block" sizes="58vw" />
-
-      <div
-        className="pointer-events-none absolute inset-0 hidden lg:block"
-        style={{
-          background: [
-            "linear-gradient(90deg, rgba(1,220,2,0.12) 0%, rgba(12,1,155,0.06) 6%, rgba(247,248,252,0) 14%)",
-            "linear-gradient(90deg, #F7F8FC 0%, #F7F8FC 28%, rgba(247,248,252,0.98) 38%, rgba(247,248,252,0.88) 46%, rgba(247,248,252,0.62) 54%, rgba(247,248,252,0.28) 62%, rgba(247,248,252,0.08) 70%, transparent 78%)",
-          ].join(", "),
-        }}
-      />
-
-      {/* Mobile — full-bleed slideshow with centered overlay text */}
+      {/* Mobile — full-bleed centered hero */}
       <div className="relative min-h-[min(88vh,760px)] lg:hidden">
-        <HeroSlideshow className="absolute inset-0" sizes="100vw" dotClassName="bottom-6" />
+        <HeroSlideImage index={index} direction={direction} className="absolute inset-0" sizes="100vw" />
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -215,77 +247,129 @@ export function Hero({
             </Link>
           </motion.div>
 
-          <motion.div
-            {...mobileStagger}
-            transition={{ duration: 0.6, delay: 0.44 }}
-            className="mt-8 inline-flex max-w-xs items-start gap-3 rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-left backdrop-blur-md"
-          >
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-secondary" />
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-secondary">Hargeisa</p>
-              <p className="mt-0.5 text-sm font-semibold text-white">Near Telesom Headquarters</p>
-              <p className="mt-1 text-xs leading-5 text-white/75">Practical ICT education for today&apos;s digital careers.</p>
-            </div>
+          <motion.div {...mobileStagger} transition={{ duration: 0.6, delay: 0.44 }} className="mt-8">
+            <LocationCard className="max-w-xs border-white/20 bg-white/10" />
           </motion.div>
+
+          <HeroSlideDots index={index} goToSlide={goToSlide} variant="dark" className="mt-8" />
         </div>
       </div>
 
-      {/* Mobile highlights — below hero */}
       <div className="px-5 py-8 sm:px-8 lg:hidden">
         <HeroHighlights items={highlights} />
       </div>
 
-      {/* Desktop — split layout */}
-      <div className="relative mx-auto hidden max-w-7xl lg:block lg:min-h-[calc(100vh-7.5rem)]">
-        <div className="flex max-w-[52%] flex-col justify-center px-12 py-20 xl:px-16">
-          <p className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/15 bg-white/90 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary shadow-sm backdrop-blur-sm">
-            <GraduationCap className="h-3.5 w-3.5 text-secondary" />
-            Leading Technology
-          </p>
+      {/* Desktop — professional split layout with soft blend */}
+      <div className="relative mx-auto hidden max-w-[1400px] lg:grid lg:min-h-[calc(100vh-7.5rem)] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
+        {/* Left content panel */}
+        <div className="relative z-20 flex flex-col justify-center px-10 py-16 xl:px-14 xl:py-20">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.45]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(12,1,155,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(12,1,155,0.04) 1px, transparent 1px)",
+              backgroundSize: "28px 28px",
+            }}
+          />
+          <div
+            className="pointer-events-none absolute inset-y-0 end-0 w-24"
+            style={{
+              background: "linear-gradient(90deg, transparent 0%, #F7F8FC 100%)",
+            }}
+          />
 
-          <h1 className="mt-6 max-w-xl font-heading text-[3.15rem] font-bold leading-[1.12] tracking-tight text-foreground">
-            {title}
-          </h1>
-
-          <p className="mt-5 max-w-lg text-lg leading-7 text-muted-foreground">{description}</p>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/faculty"
-              className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-7 text-sm font-semibold text-white shadow-sm transition hover:bg-primary/90"
+          <div className="relative">
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary shadow-sm"
             >
-              {dictionary.nav.faculty}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-            <Link
-              href="/about"
-              className="inline-flex h-12 items-center rounded-full border border-border bg-white/90 px-7 text-sm font-semibold text-primary backdrop-blur-sm transition hover:border-primary"
-            >
-              {dictionary.nav.about}
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex h-12 items-center rounded-full border border-border bg-white/90 px-7 text-sm font-semibold text-foreground backdrop-blur-sm transition hover:border-primary hover:text-primary"
-            >
-              {dictionary.nav.contact}
-            </Link>
-          </div>
+              <GraduationCap className="h-3.5 w-3.5 text-secondary" />
+              Leading Technology
+            </motion.p>
 
-          <div className="mt-10">
-            <HeroHighlights items={highlights} />
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.08 }}
+              className="mt-6 max-w-xl font-heading text-[2.85rem] font-bold leading-[1.1] tracking-tight text-foreground xl:text-[3.25rem]"
+            >
+              {title}
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.16 }}
+              className="mt-5 max-w-lg text-lg leading-8 text-muted-foreground"
+            >
+              {description}
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.24 }}
+              className="mt-8 flex flex-wrap gap-3"
+            >
+              <Link
+                href="/faculty"
+                className="inline-flex h-12 items-center gap-2 rounded-full bg-primary px-7 text-sm font-semibold text-white shadow-md transition hover:bg-primary/90 hover:shadow-lg"
+              >
+                {dictionary.nav.faculty}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex h-12 items-center rounded-full border border-border bg-white px-7 text-sm font-semibold text-primary shadow-sm transition hover:border-primary"
+              >
+                {dictionary.nav.about}
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex h-12 items-center rounded-full border border-border bg-white px-7 text-sm font-semibold text-foreground shadow-sm transition hover:border-primary hover:text-primary"
+              >
+                {dictionary.nav.contact}
+              </Link>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.32 }}
+              className="mt-10"
+            >
+              <HeroHighlights items={highlights} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <HeroSlideDots index={index} goToSlide={goToSlide} variant="light" className="mt-8" />
+            </motion.div>
           </div>
         </div>
 
-        <div className="absolute end-8 bottom-10 z-20 max-w-xs">
-          <div className="rounded-2xl border border-white/25 bg-primary/90 p-6 shadow-xl backdrop-blur-md">
-            <div className="flex items-start gap-3 text-white">
-              <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-secondary" />
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary">Hargeisa</p>
-                <p className="mt-1 text-base font-semibold">Near Telesom Headquarters</p>
-                <p className="mt-2 text-sm text-white/80">Practical ICT education for today&apos;s digital careers.</p>
-              </div>
-            </div>
+        {/* Right image panel — blends into left */}
+        <div className="relative min-h-[34rem]">
+          <HeroSlideImage index={index} direction={direction} className="absolute inset-0" sizes="50vw" />
+
+          {/* Soft mix gradient — photo fades into left panel */}
+          <div
+            className="pointer-events-none absolute inset-0 z-10"
+            style={{
+              background: [
+                "linear-gradient(90deg, #F7F8FC 0%, rgba(247,248,252,0.98) 8%, rgba(247,248,252,0.9) 14%, rgba(247,248,252,0.72) 22%, rgba(247,248,252,0.42) 32%, rgba(247,248,252,0.16) 42%, transparent 54%)",
+                "linear-gradient(180deg, rgba(247,248,252,0.08) 0%, transparent 18%, transparent 72%, rgba(12,1,155,0.12) 100%)",
+              ].join(", "),
+            }}
+          />
+
+          <div className="absolute end-6 bottom-8 z-20 max-w-[19rem] xl:end-10 xl:bottom-10 xl:max-w-xs">
+            <LocationCard />
           </div>
         </div>
       </div>
