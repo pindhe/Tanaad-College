@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, GraduationCap, MapPin } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, GraduationCap, MapPin } from "lucide-react";
 import { CollegeLogo } from "@/components/college-logo";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { cn } from "@/lib/utils";
@@ -19,9 +19,9 @@ export const HERO_SLIDES = [
 const SLIDE_INTERVAL_MS = 5000;
 
 const slideVariants = {
-  enter: { opacity: 0, scale: 1.03 },
+  enter: { opacity: 0, scale: 1.04 },
   center: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 1.01 },
+  exit: { opacity: 0, scale: 1.02 },
 };
 
 const mobileStagger = {
@@ -31,20 +31,34 @@ const mobileStagger = {
 
 function useHeroSlideshow() {
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [progressKey, setProgressKey] = useState(0);
 
-  const goToSlide = useCallback((nextIndex: number) => {
-    setIndex(nextIndex);
-  }, []);
+  const bumpProgress = useCallback(() => setProgressKey((k) => k + 1), []);
+
+  const goToSlide = useCallback(
+    (nextIndex: number) => {
+      setIndex((nextIndex + HERO_SLIDES.length) % HERO_SLIDES.length);
+      bumpProgress();
+    },
+    [bumpProgress],
+  );
+
+  const goNext = useCallback(() => goToSlide(index + 1), [goToSlide, index]);
+  const goPrev = useCallback(() => goToSlide(index - 1), [goToSlide, index]);
 
   useEffect(() => {
+    if (paused) return;
+
     const timer = window.setInterval(() => {
       setIndex((current) => (current + 1) % HERO_SLIDES.length);
+      bumpProgress();
     }, SLIDE_INTERVAL_MS);
 
     return () => window.clearInterval(timer);
-  }, []);
+  }, [paused, bumpProgress]);
 
-  return { index, goToSlide };
+  return { index, progressKey, paused, setPaused, goToSlide, goNext, goPrev };
 }
 
 function HeroSlideDots({
@@ -65,15 +79,35 @@ function HeroSlideDots({
           key={slide}
           type="button"
           aria-label={`Show slide ${slideIndex + 1}`}
+          aria-current={slideIndex === index ? "true" : undefined}
           onClick={() => goToSlide(slideIndex)}
           className={cn(
             "h-1.5 rounded-full transition-all duration-300",
             slideIndex === index
-              ? cn("w-8", variant === "light" ? "bg-primary" : "bg-secondary")
-              : cn("w-1.5", variant === "light" ? "bg-primary/25 hover:bg-primary/40" : "bg-white/55 hover:bg-white"),
+              ? cn("w-8", variant === "light" ? "bg-secondary" : "bg-secondary")
+              : cn("w-1.5", variant === "light" ? "bg-primary/20 hover:bg-primary/35" : "bg-white/45 hover:bg-white/70"),
           )}
         />
       ))}
+    </div>
+  );
+}
+
+function HeroSlideProgress({ progressKey, variant = "light" }: { progressKey: number; variant?: "light" | "dark" }) {
+  return (
+    <div
+      className={cn(
+        "h-0.5 w-full overflow-hidden rounded-full",
+        variant === "light" ? "bg-primary/10" : "bg-white/20",
+      )}
+    >
+      <motion.div
+        key={progressKey}
+        className={cn("h-full rounded-full", variant === "light" ? "bg-secondary" : "bg-secondary")}
+        initial={{ width: "0%" }}
+        animate={{ width: "100%" }}
+        transition={{ duration: SLIDE_INTERVAL_MS / 1000, ease: "linear" }}
+      />
     </div>
   );
 }
@@ -82,10 +116,12 @@ function HeroSlideImage({
   index,
   className,
   sizes,
+  kenBurns = true,
 }: {
   index: number;
   className?: string;
   sizes: string;
+  kenBurns?: boolean;
 }) {
   return (
     <div className={cn("relative overflow-hidden", className)}>
@@ -99,17 +135,50 @@ function HeroSlideImage({
           transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
           className="absolute inset-0"
         >
-          <Image
-            src={HERO_SLIDES[index]}
-            alt={`Tanaad College slide ${index + 1}`}
-            fill
-            priority={index === 0}
-            className="object-cover object-center"
-            sizes={sizes}
-          />
+          <motion.div
+            className="absolute inset-0"
+            initial={kenBurns ? { scale: 1 } : false}
+            animate={kenBurns ? { scale: 1.06 } : undefined}
+            transition={kenBurns ? { duration: SLIDE_INTERVAL_MS / 1000 + 0.85, ease: "linear" } : undefined}
+          >
+            <Image
+              src={HERO_SLIDES[index]}
+              alt={`Tanaad College slide ${index + 1}`}
+              fill
+              priority={index === 0}
+              className="object-cover object-center"
+              sizes={sizes}
+            />
+          </motion.div>
         </motion.div>
       </AnimatePresence>
     </div>
+  );
+}
+
+function HeroNavButton({
+  label,
+  onClick,
+  children,
+  className,
+}: {
+  label: string;
+  onClick: () => void;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className={cn(
+        "flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-primary/75 text-white shadow-lg backdrop-blur-sm transition hover:bg-primary hover:scale-105",
+        className,
+      )}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -119,7 +188,7 @@ function HeroHighlights({ items }: { items: string[] }) {
       {items.map((item) => (
         <div
           key={item}
-          className="rounded-xl border border-border/70 bg-white/95 px-4 py-3.5 text-sm font-medium text-foreground shadow-sm"
+          className="rounded-xl border border-border/70 bg-white/95 px-4 py-3.5 text-sm font-medium text-foreground shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
         >
           <span className="mb-2 block h-1 w-8 rounded-full bg-secondary" />
           {item}
@@ -156,12 +225,18 @@ export function Hero({
   logo?: string | null;
 }) {
   const highlights = [dictionary.hero.quality, dictionary.hero.lecturers, dictionary.hero.studentFocused];
-  const { index, goToSlide } = useHeroSlideshow();
+  const { index, progressKey, setPaused, goToSlide, goNext, goPrev } = useHeroSlideshow();
 
   return (
     <section className="relative overflow-hidden bg-[#F7F8FC]">
       {/* Mobile — full-bleed centered hero */}
-      <div className="relative min-h-[min(88vh,760px)] lg:hidden">
+      <div
+        className="relative min-h-[min(88vh,760px)] lg:hidden"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onTouchStart={() => setPaused(true)}
+        onTouchEnd={() => setPaused(false)}
+      >
         <HeroSlideImage index={index} className="absolute inset-0" sizes="100vw" />
         <div
           className="pointer-events-none absolute inset-0"
@@ -171,7 +246,7 @@ export function Hero({
           }}
         />
 
-        <div className="relative z-10 flex min-h-[min(88vh,760px)] flex-col items-center justify-center px-5 pb-16 pt-20 text-center sm:px-8">
+        <div className="relative z-10 flex min-h-[min(88vh,760px)] flex-col items-center justify-center px-5 pb-20 pt-20 text-center sm:px-8">
           <motion.div
             {...mobileStagger}
             transition={{ duration: 0.55, delay: 0.05 }}
@@ -229,8 +304,25 @@ export function Hero({
           <motion.div {...mobileStagger} transition={{ duration: 0.6, delay: 0.44 }} className="mt-8">
             <LocationCard className="max-w-xs border-white/20 bg-white/10" />
           </motion.div>
+        </div>
 
-          <HeroSlideDots index={index} goToSlide={goToSlide} variant="dark" className="mt-8" />
+        {/* Mobile controls — bottom overlay */}
+        <div className="absolute inset-x-0 bottom-0 z-20 px-6 pb-6">
+          <div className="mx-auto flex max-w-xs flex-col items-center gap-3">
+            <HeroSlideProgress progressKey={progressKey} variant="dark" />
+            <div className="flex w-full items-center justify-between gap-4">
+              <HeroNavButton label="Previous slide" onClick={goPrev}>
+                <ChevronLeft className="h-5 w-5" />
+              </HeroNavButton>
+              <HeroSlideDots index={index} goToSlide={goToSlide} variant="dark" />
+              <HeroNavButton label="Next slide" onClick={goNext}>
+                <ChevronRight className="h-5 w-5" />
+              </HeroNavButton>
+            </div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">
+              {String(index + 1).padStart(2, "0")} / {String(HERO_SLIDES.length).padStart(2, "0")}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -251,10 +343,23 @@ export function Hero({
             }}
           />
           <div className="relative z-10">
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              className="mb-6 flex items-center gap-4"
+            >
+              <CollegeLogo src={logo} size="md" />
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-secondary">Tanaad College</p>
+                <p className="text-sm text-muted-foreground">Center of Leading IT & Technology</p>
+              </div>
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.04 }}
               className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/10 bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-primary shadow-sm"
             >
               <GraduationCap className="h-3.5 w-3.5 text-secondary" />
@@ -314,19 +419,15 @@ export function Hero({
             >
               <HeroHighlights items={highlights} />
             </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <HeroSlideDots index={index} goToSlide={goToSlide} variant="light" className="mt-8" />
-            </motion.div>
           </div>
         </div>
 
         {/* Right image panel — full bleed to screen edge */}
-        <div className="relative min-h-[calc(100vh-7.5rem)] flex-1">
+        <div
+          className="relative min-h-[calc(100vh-7.5rem)] flex-1"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
           <HeroSlideImage index={index} className="absolute inset-0 h-full w-full" sizes="55vw" />
 
           {/* Narrow seam blend only at the join with left panel */}
@@ -337,8 +438,33 @@ export function Hero({
             }}
           />
 
+          {/* Prev / next */}
+          <div className="absolute start-8 top-1/2 z-20 hidden -translate-y-1/2 xl:flex">
+            <HeroNavButton label="Previous slide" onClick={goPrev}>
+              <ChevronLeft className="h-5 w-5" />
+            </HeroNavButton>
+          </div>
+          <div className="absolute end-8 top-1/2 z-20 hidden -translate-y-1/2 xl:flex">
+            <HeroNavButton label="Next slide" onClick={goNext}>
+              <ChevronRight className="h-5 w-5" />
+            </HeroNavButton>
+          </div>
+
           <div className="absolute end-6 bottom-8 z-20 max-w-[19rem] xl:end-10 xl:bottom-10 xl:max-w-xs">
             <LocationCard />
+          </div>
+
+          {/* Slideshow controls — bottom center of image panel */}
+          <div className="absolute inset-x-0 bottom-8 z-20 flex flex-col items-center gap-3 px-10 xl:bottom-10">
+            <div className="w-full max-w-xs">
+              <HeroSlideProgress progressKey={progressKey} variant="dark" />
+            </div>
+            <div className="flex items-center gap-5">
+              <HeroSlideDots index={index} goToSlide={goToSlide} variant="dark" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/75">
+                {String(index + 1).padStart(2, "0")} / {String(HERO_SLIDES.length).padStart(2, "0")}
+              </span>
+            </div>
           </div>
         </div>
       </div>
