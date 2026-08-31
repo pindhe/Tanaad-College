@@ -31,26 +31,20 @@ const mobileStagger = {
 
 function useHeroSlideshow() {
   const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
 
-  const goToSlide = useCallback(
-    (nextIndex: number) => {
-      setDirection(nextIndex > index || (index === HERO_SLIDES.length - 1 && nextIndex === 0) ? 1 : -1);
-      setIndex(nextIndex);
-    },
-    [index],
-  );
+  const goToSlide = useCallback((nextIndex: number) => {
+    setIndex(nextIndex);
+  }, []);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setDirection(1);
       setIndex((current) => (current + 1) % HERO_SLIDES.length);
     }, SLIDE_INTERVAL_MS);
 
     return () => window.clearInterval(timer);
   }, []);
 
-  return { index, direction, goToSlide };
+  return { index, goToSlide };
 }
 
 function HeroSlideDots({
@@ -86,12 +80,10 @@ function HeroSlideDots({
 
 function HeroSlideImage({
   index,
-  direction,
   className,
   sizes,
 }: {
   index: number;
-  direction: number;
   className?: string;
   sizes: string;
 }) {
@@ -164,13 +156,13 @@ export function Hero({
   logo?: string | null;
 }) {
   const highlights = [dictionary.hero.quality, dictionary.hero.lecturers, dictionary.hero.studentFocused];
-  const { index, direction, goToSlide } = useHeroSlideshow();
+  const { index, goToSlide } = useHeroSlideshow();
 
   return (
     <section className="relative overflow-hidden bg-[#F7F8FC]">
       {/* Mobile — full-bleed centered hero */}
       <div className="relative min-h-[min(88vh,760px)] lg:hidden">
-        <HeroSlideImage index={index} direction={direction} className="absolute inset-0" sizes="100vw" />
+        <HeroSlideImage index={index} className="absolute inset-0" sizes="100vw" />
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -335,7 +327,7 @@ export function Hero({
 
         {/* Right image panel — full bleed to screen edge */}
         <div className="relative min-h-[calc(100vh-7.5rem)] flex-1">
-          <HeroSlideImage index={index} direction={direction} className="absolute inset-0 h-full w-full" sizes="55vw" />
+          <HeroSlideImage index={index} className="absolute inset-0 h-full w-full" sizes="55vw" />
 
           {/* Narrow seam blend only at the join with left panel */}
           <div

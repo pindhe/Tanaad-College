@@ -61,5 +61,5 @@ export async function isDatabaseAvailable(): Promise<boolean> {
 
 export function markDatabaseUnavailable(): void {
   globalForDb.tanaadDbAvailable = false;
-  globalForDb.tanaadCheckedAt = Date.now();
+  globalForDb.tanaadDbCheckedAt = Date.now();
 }
