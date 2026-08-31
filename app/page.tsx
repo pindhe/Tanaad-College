@@ -17,7 +17,7 @@ import { getSettings } from "@/lib/settings";
 const IMAGES = {
   about: "/images/imgs/5.jpg",
   diploma: "/images/imgs/1.jpg",
-  short: "/images/imgs/500379155_1405416951033897_5714435640946410489_n.jpg",
+  short: "/images/imgs/11.jpg",
   basic: "/images/imgs/20.jpg",
 } as const;
 

@@ -27,7 +27,10 @@ async function main() {
       email: "tanaadcollege@gmail.com",
       address: "Near Telesom Headquarters, Hargeisa, Somalia",
       whatsapp: "+252638555522",
-      facebook: "https://www.facebook.com/105796400780549",
+      facebook: "https://www.facebook.com/tanaadcollege",
+      tiktok: "https://www.tiktok.com/@tanaad.college",
+      googleMapsUrl:
+        "https://maps.google.com/maps?q=9.5624155,44.0769968&hl=en&z=16&output=embed",
     },
     create: {
       id: "default",
@@ -40,7 +43,10 @@ async function main() {
       email: "tanaadcollege@gmail.com",
       address: "Near Telesom Headquarters, Hargeisa, Somalia",
       whatsapp: "+252638555522",
-      facebook: "https://www.facebook.com/105796400780549",
+      facebook: "https://www.facebook.com/tanaadcollege",
+      tiktok: "https://www.tiktok.com/@tanaad.college",
+      googleMapsUrl:
+        "https://maps.google.com/maps?q=9.5624155,44.0769968&hl=en&z=16&output=embed",
       aboutText: "[Official About]",
       historyText: "[Official History]",
       vision: "[Official Vision]",

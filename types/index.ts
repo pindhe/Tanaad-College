@@ -1,12 +1,11 @@
 import type {
-  ApplicationStatus,
   ContactStatus,
   GalleryCategory,
   Gender,
   Role,
 } from "@prisma/client";
 
-export type { ApplicationStatus, ContactStatus, GalleryCategory, Gender, Role };
+export type { ContactStatus, GalleryCategory, Gender, Role };
 
 export interface SiteSettingsData {
   id: string;
@@ -38,46 +37,6 @@ export interface SiteSettingsData {
   studentLifeContent: string;
 }
 
-export interface ProgramCardData {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  duration: string;
-  image: string | null;
-  department: {
-    name: string;
-    faculty: {
-      name: string;
-    };
-  };
-}
-
-export interface NewsCardData {
-  id: string;
-  title: string;
-  slug: string;
-  category: string;
-  excerpt: string;
-  featuredImage: string | null;
-  publishedAt: Date | null;
-  author: {
-    name: string;
-  };
-}
-
-export interface EventCardData {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  image: string | null;
-  location: string;
-  eventDate: Date;
-  eventTime: string;
-  registrationLink: string | null;
-}
-
 export interface StaffCardData {
   id: string;
   name: string;
@@ -102,25 +61,6 @@ export interface TestimonialData {
   photo: string | null;
   content: string;
   rating: number;
-}
-
-export interface ApplicationStatusResult {
-  referenceNumber: string;
-  fullName: string;
-  status: ApplicationStatus;
-  createdAt: Date;
-  program: {
-    name: string;
-  };
-}
-
-export interface StudentLifeContent {
-  campusLife: string;
-  clubs: string;
-  sports: string;
-  events: string;
-  activities: string;
-  communityService: string;
 }
 
 export type Locale = "en" | "so" | "ar";

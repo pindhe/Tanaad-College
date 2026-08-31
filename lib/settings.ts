@@ -1,4 +1,4 @@
-import { COLLEGE_LOGO_PATH } from "@/lib/brand";
+import { COLLEGE_LOGO_PATH, OFFICIAL_LINKS } from "@/lib/brand";
 import { isDatabaseAvailable, markDatabaseUnavailable } from "@/lib/db-status";
 import { prisma } from "@/lib/prisma";
 import type { SiteSettingsData } from "@/types";
@@ -10,17 +10,17 @@ const fallback: SiteSettingsData = {
   favicon: COLLEGE_LOGO_PATH,
   heroTitle: "Build Your Future With Tanaad College",
   heroDescription: "Center of Leading IT & Technology in Hargeisa. Quality teaching, practical digital skills, and pathways into technology careers.",
-  heroImage: "/images/imgs/500379155_1405416951033897_5714435640946410489_n.jpg",
+  heroImage: "/images/imgs/11.jpg",
   phone: "+252 63 8555522",
   email: "tanaadcollege@gmail.com",
   address: "Near Telesom Headquarters, Hargeisa, Somalia",
   whatsapp: "+252638555522",
-  facebook: "https://www.facebook.com/105796400780549",
+  facebook: OFFICIAL_LINKS.facebook,
   instagram: null,
-  tiktok: "https://www.tiktok.com/@tanaad.college",
+  tiktok: OFFICIAL_LINKS.tiktok,
   youtube: null,
   linkedin: null,
-  googleMapsUrl: null,
+  googleMapsUrl: OFFICIAL_LINKS.googleMapsEmbed,
   aboutText: "[Official About]",
   historyText: "[Official History]",
   vision: "[Official Vision]",

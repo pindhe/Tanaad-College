@@ -39,7 +39,11 @@ export function collegeJsonLd(settings: {
   phone: string;
   email: string;
   address: string;
+  facebook?: string | null;
+  tiktok?: string | null;
 }) {
+  const sameAs = [settings.facebook, settings.tiktok].filter(Boolean) as string[];
+
   return {
     "@context": "https://schema.org",
     "@type": "CollegeOrUniversity",
@@ -50,6 +54,14 @@ export function collegeJsonLd(settings: {
     address: {
       "@type": "PostalAddress",
       streetAddress: settings.address,
+      addressLocality: "Hargeisa",
+      addressCountry: "SO",
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: 9.5624155,
+      longitude: 44.0769968,
+    },
+    ...(sameAs.length > 0 ? { sameAs } : {}),
   };
 }

@@ -35,9 +35,9 @@ export async function generateMetadata() {
 
 const IMAGES = {
   hero: "/images/imgs/17.png",
-  who: "/images/imgs/788901948_1601108978040333_6765133490496336309_n.jpg",
-  story: "/images/imgs/485168610_1341403394101920_3051021275619581611_n.jpg",
-  vision: "/images/imgs/787743859_1817818439793744_5902861751540954248_n.jpg",
+  who: "/images/imgs/5.jpg",
+  story: "/images/imgs/20.jpg",
+  vision: "/images/imgs/3.jpg",
 } as const;
 
 const highlights = [

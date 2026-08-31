@@ -31,11 +31,11 @@ export const metadata = buildMetadata({
 const IMAGES = {
   hero: "/images/imgs/18.png",
   diploma: "/images/imgs/5.jpg",
-  short: "/images/imgs/500379155_1405416951033897_5714435640946410489_n.jpg",
+  short: "/images/imgs/11.jpg",
   basic: "/images/imgs/7.jpg",
   dataAnalysis: "/images/imgs/6.jpg",
   biometric: "/images/imgs/4.jpg",
-  campus: "/images/imgs/502997519_1408768317365427_6447797780186284108_n.jpg",
+  campus: "/images/imgs/2.jpg",
 } as const;
 
 const ictSubjects = [
@@ -54,7 +54,12 @@ const shortCourses = [
   { title: "Fingerprint / Biometric Technology", icon: Fingerprint, image: IMAGES.biometric, poster: true },
   { title: "Data Analysis", icon: LineChart, image: IMAGES.dataAnalysis, poster: true },
   { title: "Research Methodology", icon: Search, image: IMAGES.short },
-] as const;
+] satisfies {
+  title: string;
+  icon: typeof Palette;
+  image: string;
+  poster?: boolean;
+}[];
 
 const officeApps = ["Windows 11", "Word", "Excel", "PowerPoint", "Publisher", "Outlook", "Internet training"];
 

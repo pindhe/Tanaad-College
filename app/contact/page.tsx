@@ -3,6 +3,7 @@ import { Clock, Facebook, Mail, MapPin, MessageCircle, Phone } from "lucide-reac
 import { ContactForm } from "@/components/contact-form";
 import { PageHeader } from "@/components/page-header";
 import { Section } from "@/components/section";
+import { OFFICIAL_LINKS } from "@/lib/brand";
 import { buildMetadata } from "@/lib/metadata";
 import { getSettings } from "@/lib/settings";
 import { whatsappLink } from "@/lib/utils";
@@ -14,7 +15,7 @@ export const metadata = buildMetadata({
 });
 
 const HERO_IMAGE = "/images/imgs/19.jpg";
-const SIDE_IMAGE = "/images/imgs/790683925_1817997656442489_4589591040991255365_n.jpg";
+const SIDE_IMAGE = "/images/imgs/3.jpg";
 
 function displayHours(value: string) {
   const trimmed = value.trim();
@@ -30,9 +31,8 @@ export default async function ContactPage() {
   const whatsappHref = settings.whatsapp
     ? whatsappLink(settings.whatsapp, "Hello Tanaad College, I would like to learn more about the college.")
     : null;
-  const mapsSearchUrl =
-    settings.googleMapsUrl ||
-    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address)}`;
+  const mapsEmbedUrl = settings.googleMapsUrl ?? OFFICIAL_LINKS.googleMapsEmbed;
+  const mapsPlaceUrl = OFFICIAL_LINKS.googleMapsPlace;
 
   return (
     <>
@@ -79,7 +79,7 @@ export default async function ContactPage() {
             </div>
           )}
           <a
-            href={mapsSearchUrl}
+            href={mapsPlaceUrl}
             target="_blank"
             rel="noreferrer"
             className="group rounded-2xl border border-border bg-white p-5 transition hover:border-primary/30 hover:shadow-md"
@@ -194,10 +194,10 @@ export default async function ContactPage() {
             <h2 className="text-2xl">Find us</h2>
             <p className="mt-2 text-muted-foreground">{settings.address}</p>
           </div>
-          {settings.googleMapsUrl ? (
+          {mapsEmbedUrl ? (
             <iframe
               title="Tanaad College map"
-              src={settings.googleMapsUrl}
+              src={mapsEmbedUrl}
               className="h-80 w-full border-0"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -207,7 +207,7 @@ export default async function ContactPage() {
               <MapPin className="h-10 w-10 text-secondary" />
               <p className="mt-4 max-w-md text-lg font-semibold">{settings.address}</p>
               <a
-                href={mapsSearchUrl}
+                href={mapsPlaceUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-6 inline-flex h-11 items-center rounded-full bg-secondary px-6 text-sm font-semibold text-foreground transition hover:bg-secondary/90"

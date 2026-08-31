@@ -20,42 +20,6 @@ async function sendEmail(to: string, subject: string, html: string): Promise<voi
   });
 }
 
-export async function sendApplicationConfirmation(input: {
-  to: string;
-  name: string;
-  program: string;
-  referenceNumber: string;
-}): Promise<void> {
-  await sendEmail(
-    input.to,
-    `Application received — ${input.referenceNumber}`,
-    `<p>Dear ${input.name},</p>
-     <p>Thank you for applying to Tanaad College.</p>
-     <p><strong>Program:</strong> ${input.program}<br/>
-     <strong>Reference:</strong> ${input.referenceNumber}</p>
-     <p>You can check your application status using your reference number and the phone or email you provided.</p>
-     <p>Tanaad College Admissions</p>`,
-  );
-}
-
-export async function sendAdmissionsNotification(input: {
-  name: string;
-  program: string;
-  referenceNumber: string;
-}): Promise<void> {
-  const adminEmail = process.env.ADMIN_EMAIL;
-  if (!adminEmail) return;
-
-  await sendEmail(
-    adminEmail,
-    `New application ${input.referenceNumber}`,
-    `<p>A new application has been submitted.</p>
-     <p><strong>Applicant:</strong> ${input.name}<br/>
-     <strong>Program:</strong> ${input.program}<br/>
-     <strong>Reference:</strong> ${input.referenceNumber}</p>`,
-  );
-}
-
 export async function sendApplicationStatusEmail(input: {
   to: string;
   name: string;

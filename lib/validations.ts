@@ -7,66 +7,6 @@ export const loginSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-export const applicationPersonalSchema = z.object({
-  fullName: z.string().min(2, "Full name is required").max(120),
-  gender: z.enum(["MALE", "FEMALE", "OTHER"]),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  phone: z.string().regex(phoneRegex, "Enter a valid phone number"),
-  email: z.string().email("Enter a valid email address"),
-  address: z.string().min(5, "Address is required").max(300),
-});
-
-export const applicationAcademicSchema = z.object({
-  previousSchool: z.string().min(2, "Previous school is required").max(200),
-  qualification: z.string().min(2, "Qualification is required").max(120),
-  graduationYear: z.coerce
-    .number()
-    .int()
-    .min(1980, "Enter a valid year")
-    .max(new Date().getFullYear() + 1, "Enter a valid year"),
-  gpa: z.string().max(20).optional().or(z.literal("")),
-});
-
-export const applicationProgramSchema = z.object({
-  facultyId: z.string().min(1, "Select a faculty"),
-  departmentId: z.string().min(1, "Select a department"),
-  programId: z.string().min(1, "Select a program"),
-});
-
-export const applicationDocumentsSchema = z.object({
-  passportPhoto: z.string().min(1, "Passport photo is required"),
-  certificate: z.string().min(1, "Certificate is required"),
-  identification: z.string().min(1, "Identification document is required"),
-});
-
-export const applicationEmergencySchema = z.object({
-  emergencyName: z.string().min(2, "Emergency contact name is required").max(120),
-  emergencyRelationship: z.string().min(2, "Relationship is required").max(80),
-  emergencyPhone: z.string().regex(phoneRegex, "Enter a valid phone number"),
-});
-
-export const applicationConfirmationSchema = z.object({
-  confirmed: z.boolean().refine((value) => value === true, {
-    message: "You must confirm the information is accurate",
-  }),
-});
-
-export const applicationSchema = applicationPersonalSchema
-  .merge(applicationAcademicSchema)
-  .merge(applicationProgramSchema)
-  .merge(applicationDocumentsSchema)
-  .merge(applicationEmergencySchema)
-  .merge(applicationConfirmationSchema);
-
-export const applicationStatusSchema = z.object({
-  referenceNumber: z
-    .string()
-    .min(5, "Enter your application reference")
-    .max(40)
-    .transform((value) => value.trim().toUpperCase()),
-  contact: z.string().min(5, "Enter the phone or email used on the application"),
-});
-
 export const contactSchema = z.object({
   name: z.string().min(2, "Name is required").max(120),
   email: z.string().email("Enter a valid email address"),
@@ -225,7 +165,6 @@ export const admissionDateSchema = z.object({
   description: z.string().optional().or(z.literal("")),
 });
 
-export type ApplicationInput = z.infer<typeof applicationSchema>;
 export type ContactInput = z.infer<typeof contactSchema>;
 export type ProgramInput = z.infer<typeof programSchema>;
 export type SettingsInput = z.infer<typeof settingsSchema>;
